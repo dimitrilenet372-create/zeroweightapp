@@ -1,11 +1,13 @@
 // ── ZEROWEIGHT Service Worker ──
-const CACHE_NAME = 'zeroweight-v1';
+const CACHE_NAME = 'zeroweight-v2';
 const ASSETS = [
-  '/',
-  '/index.html',
-  '/style.css',
-  '/app.js',
-  '/manifest.json',
+  '/zeroweightapp/',
+  '/zeroweightapp/index.html',
+  '/zeroweightapp/style.css',
+  '/zeroweightapp/app.js',
+  '/zeroweightapp/manifest.json',
+  '/zeroweightapp/icon-192.png',
+  '/zeroweightapp/icon-512.png',
 ];
 
 // Installation — met les fichiers en cache
