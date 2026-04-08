@@ -186,15 +186,8 @@
 
 <script type="module" src="app.js"></script>
 
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js', { scope: './' })
-        .then(reg => console.log('SW OK:', reg.scope))
-        .catch(err => console.warn('SW erreur:', err));
-    });
-  }
-</script>
+
+
 
 </body>
 </html>
