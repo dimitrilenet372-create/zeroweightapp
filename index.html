@@ -2,22 +2,8 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>ZeroWeight</title>
-
-  <!-- PWA -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#080c12">
-
-  <!-- iPhone / iPad -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="ZeroWeight">
-  <link rel="apple-touch-icon" href="icon-192.png">
-
-  <!-- Favicon -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏋️</text></svg>">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZERO WEIGHT — Bodyweight Training</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -108,8 +94,12 @@
       <p id="preview-desc" style="font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:20px"></p>
     </div>
     <div class="modal-actions">
-      <button class="btn-cancel" onclick="closePreview()">Fermer</button>
-      <button class="btn-save"   onclick="addExoFromPreview()">+ AJOUTER</button>
+      <!-- Bouton retour picker (visible seulement depuis le picker) -->
+      <button class="btn-cancel" id="preview-back-btn" onclick="closePreviewBackToPicker()" style="display:none">← Retour</button>
+      <!-- Bouton fermer (visible depuis onglet exercices) -->
+      <button class="btn-cancel" id="preview-standalone-btn" onclick="closePreview()">Fermer</button>
+      <!-- Bouton ajouter -->
+      <button class="btn-save" id="preview-add-btn" onclick="addExoFromPreview()">+ AJOUTER</button>
     </div>
   </div>
 </div>
@@ -184,10 +174,6 @@
   </div>
 </div>
 
-<script type="module" src="app.js"></script>
-
-
-
-
+<script src="app.js"></script>
 </body>
 </html>

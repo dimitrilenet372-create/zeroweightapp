@@ -389,12 +389,12 @@ import { getFirestore, collection, doc, onSnapshot, setDoc, deleteDoc, query, or
   from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js';
 
 const firebaseConfig = {
-  apiKey:            "AIzaSyBdb3K3X-sysepTYeVUFXhoQrgwl7VWpIA",
-  authDomain:        "zeroweigth.firebaseapp.com",
-  projectId:         "zeroweigth",
-  storageBucket:     "zeroweigth.firebasestorage.app",
-  messagingSenderId: "830641664692",
-  appId:             "1:830641664692:web:194edeacb8c322ec7974ee"
+  apiKey:            "AIzaSyAPWPb6yxFFmhTwfHvng3R-rq-DCiVoR3Y",
+  authDomain:        "zeroheight-2ab5d.firebaseapp.com",
+  projectId:         "zeroheight-2ab5d",
+  storageBucket:     "zeroheight-2ab5d.firebasestorage.app",
+  messagingSenderId: "665962039211",
+  appId:             "1:665962039211:web:194edeacb8c322ec7974ee"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -700,18 +700,29 @@ function openExoPreview(exoId) {
     mediaWrap.style.display = 'none';
     mediaWrap.innerHTML = '';
   }
+  document.getElementById('preview-back-btn').style.display = 'none';
+  document.getElementById('preview-standalone-btn').style.display = 'block';
   openModal('modal-preview');
-}
-function addExoFromPreview() {
+} {
   if (previewExoId && !workoutExercises.some(we=>we.exoId===previewExoId))
     workoutExercises.push({ exoId:previewExoId, sets:[{reps:10},{reps:10},{reps:10}] });
-  closePreview(); renderWorkoutExoPicker(); openModal('modal-workout');
-}
-function closePreview() {
-  // Kill iframe to stop video
   const wrap = document.getElementById('preview-media-wrap');
   if (wrap) wrap.innerHTML = '';
   closeModal('modal-preview');
+  renderWorkoutExoPicker();
+  openModal('modal-workout');
+}
+function closePreview() {
+  const wrap = document.getElementById('preview-media-wrap');
+  if (wrap) wrap.innerHTML = '';
+  closeModal('modal-preview');
+}
+function closePreviewBackToPicker() {
+  const wrap = document.getElementById('preview-media-wrap');
+  if (wrap) wrap.innerHTML = '';
+  closeModal('modal-preview');
+  renderPickerExos(document.getElementById('picker-search').value || '');
+  openModal('modal-exo-picker');
 }
 
 // ── RENDER PROGRAMMES ──
@@ -722,7 +733,7 @@ function renderWorkouts() {
     const exos = w.exercises||[];
     const preview = exos.slice(0,3).map(e=>{const ex=getExo(e.exoId);return ex?`<div class="exo-preview"><span class="exo-preview-name">${ex.emoji} ${ex.name}</span><span class="exo-preview-sets">${e.sets.length} série${e.sets.length>1?'s':''}</span></div>`:''}).join('');
     const more = exos.length>3?`<div class="exo-more">+${exos.length-3} exercice${exos.length-3>1?'s':''}</div>`:'';
-    return `<div class="workout-card">
+    return `<div class="workout-card" onclick="editWorkout('${w.id}')">
       <div class="workout-card-header">
         <div class="workout-name">${w.name}</div>
         <div class="card-actions-col">
@@ -742,7 +753,7 @@ function renderWorkouts() {
         <div class="meta-item"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>~${w.duration} min</div>
       </div>
       ${exos.length?`<div class="workout-exercises">${preview}${more}</div>`:''}
-      <div class="card-start-wrap"><button class="start-btn" onclick="startSession('${w.id}')">▶ DÉMARRER</button></div>
+      <div class="card-start-wrap"><button class="start-btn" onclick="event.stopPropagation();startSession('${w.id}')">▶ DÉMARRER</button></div>
     </div>`;
   }).join('');
 }
@@ -954,18 +965,59 @@ function renderPickerExos(search){
     ${exos.map(e=>{
       const already=workoutExercises.some(we=>we.exoId===e.id);
       const gif=resolveExoImg(e);
-      return `<div class="exo-item${already?' exo-already':''}" onclick="${already?'':` pickExo('${e.id}')`}">
-        <div class="exo-icon-wrap">
+      return `<div class="exo-item${already?' exo-already':''}">
+        <div class="exo-icon-wrap" onclick="openExoPreviewFromPicker('${e.id}')">
           ${gif?`<img src="${gif}" class="exo-thumb" loading="lazy" onerror="this.style.display='none';this.nextSibling.style.display='flex'"><div class="exo-icon" style="display:none">${e.emoji}</div>`:`<div class="exo-icon">${e.emoji}</div>`}
         </div>
-        <div class="exo-info"><div class="exo-name">${e.name}</div><div class="exo-tags">${e.tags.slice(0,2).map(t=>`<span class="exo-tag">${t}</span>`).join('')}</div></div>
-        ${already?`<span class="exo-check">✓</span>`:`<div class="exo-add-btn"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>`}
+        <div class="exo-info" onclick="openExoPreviewFromPicker('${e.id}')">
+          <div class="exo-name">${e.name}</div>
+          <div class="exo-tags">${e.tags.slice(0,2).map(t=>`<span class="exo-tag">${t}</span>`).join('')}</div>
+        </div>
+        ${already
+          ? `<span class="exo-check">✓</span>`
+          : `<div class="exo-add-btn" onclick="pickExo('${e.id}')"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>`
+        }
       </div>`;
     }).join('')}
   `).join('');
 }
 function filterPickerExos(val){renderPickerExos(val);}
 function pickExo(id){if(!workoutExercises.some(we=>we.exoId===id))workoutExercises.push({exoId:id,sets:[{reps:10},{reps:10},{reps:10}]});closeModal('modal-exo-picker');renderWorkoutExoPicker();openModal('modal-workout');}
+
+// Ouvre la preview depuis le picker — après fermeture revient au picker
+function openExoPreviewFromPicker(exoId) {
+  previewExoId = exoId;
+  const ex = getExo(exoId); if (!ex) return;
+  const gif  = resolveExoImg(ex);
+  const ytId = YOUTUBE_MAP[exoId];
+
+  document.getElementById('preview-title').textContent  = ex.name;
+  document.getElementById('preview-desc').textContent   = ex.desc || '';
+  document.getElementById('preview-muscle').textContent = ex.muscle;
+  document.getElementById('preview-tags').innerHTML     = ex.tags.map(t=>`<span class="exo-tag">${t}</span>`).join('');
+
+  const mediaWrap = document.getElementById('preview-media-wrap');
+  if (ytId) {
+    mediaWrap.style.display = 'block';
+    mediaWrap.innerHTML = `<div class="preview-video-wrap"><iframe src="https://www.youtube.com/embed/${ytId}?autoplay=1&mute=1&loop=1&playlist=${ytId}&controls=1&rel=0&modestbranding=1" allow="autoplay; encrypted-media" allowfullscreen frameborder="0" class="preview-iframe"></iframe></div>`;
+  } else if (gif) {
+    mediaWrap.style.display = 'block';
+    mediaWrap.innerHTML = `<div class="preview-gif-wrap"><img src="${gif}" class="preview-gif-img" alt="${ex.name}"></div>`;
+  } else {
+    mediaWrap.style.display = 'none';
+    mediaWrap.innerHTML = '';
+  }
+
+  // Bouton ajouter adapté
+  const alreadyAdded = workoutExercises.some(we=>we.exoId===exoId);
+  document.getElementById('preview-add-btn').textContent = alreadyAdded ? '✓ DÉJÀ AJOUTÉ' : '+ AJOUTER';
+  document.getElementById('preview-add-btn').disabled = alreadyAdded;
+  document.getElementById('preview-back-btn').style.display = 'block';
+  document.getElementById('preview-standalone-btn').style.display = 'none';
+
+  closeModal('modal-exo-picker');
+  openModal('modal-preview');
+}
 
 // ── SESSION ──
 function startSession(workoutId){
@@ -1051,7 +1103,7 @@ Object.assign(window, {
   // Programmes
   openNewWorkout, editWorkout, deleteWorkout, saveWorkout, startSession,
   // Exercices
-  filterExercices, filterMuscle, openExoPreview, addExoFromPreview, closePreview,
+  filterExercices, filterMuscle, openExoPreview, openExoPreviewFromPicker, addExoFromPreview, closePreview, closePreviewBackToPicker,
   // Picker exercice
   switchToExoPickerMode, filterPickerExos, pickExo,
   // Sets
