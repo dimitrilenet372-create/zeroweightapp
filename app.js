@@ -703,7 +703,8 @@ function openExoPreview(exoId) {
   document.getElementById('preview-back-btn').style.display = 'none';
   document.getElementById('preview-standalone-btn').style.display = 'block';
   openModal('modal-preview');
-} {
+}
+function addExoFromPreview() {
   if (previewExoId && !workoutExercises.some(we=>we.exoId===previewExoId))
     workoutExercises.push({ exoId:previewExoId, sets:[{reps:10},{reps:10},{reps:10}] });
   const wrap = document.getElementById('preview-media-wrap');
